@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails de la formation</title>
+    <style>
+        .back-button { 
+            background: #cc0000; 
+            color: white; 
+            padding: 10px; 
+            border: none; 
+            cursor: pointer;
+        }
+        .detail-item { margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='trouver-une-formation.html'">
+        ← Retour à la recherche
+    </button>
+
+    <div id="formation-details"></div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const acro = params.get('acro');
+
+        fetch('formations.json')
+            .then(r => r.json())
+            .then(data => {
+                const formation = data.formations.find(f => f.acro === acro);
+                displayDetails(formation);
+            });
+
+        function displayDetails(f) {
+            const html = `
+                <h1>${f.acro} - ${f.name}</h1>
+                <div class="detail-item"><strong>Type :</strong> ${f.type}</div>
+                <div class="detail-item"><strong>Durée :</strong> ${f.duree}</div>
+                <div class="detail-item"><strong>Public :</strong> ${f.public}</div>
+                <div class="detail-item"><strong>Objectifs :</strong> ${f.objectifs}</div>
+                <div class="detail-item"><strong>Prérequis :</strong> ${f.prerequis}</div>
+            `;
+            document.getElementById('formation-details').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
