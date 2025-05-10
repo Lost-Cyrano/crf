@@ -2,94 +2,77 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recherche Formations Croix-Rouge</title>
+    <title>Recherche de Formations</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            border: 2px solid #cc0000;
-            border-radius: 4px;
-        }
-
-        .result-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .acronym {
-            color: #cc0000;
-            font-weight: bold;
-        }
-
-        h1 {
-            color: #cc0000;
-            text-align: center;
-        }
+        /* Styles similaires à précédemment + */
+        .type-section { margin: 30px 0; border-top: 2px solid #cc0000; }
+        .type-title { background: #cc0000; color: white; padding: 5px 10px; }
     </style>
 </head>
 <body>
-    <h1>🔍 Recherche de Formations Croix-Rouge</h1>
+    <h1>🔍 Rechercher une formation</h1>
+    <input type="text" id="searchInput" class="search-box" placeholder="Recherche par acronyme ou nom...">
     
-    <input type="text" 
-           class="search-box" 
-           placeholder="Rechercher par acronymes (ex: PSC1, GQS)..."
-           id="searchInput">
-
-    <div id="results"></div>
+    <div id="results">
+        <!-- Les formations groupées par type apparaissent ici -->
+    </div>
 
     <script>
-        let formations = [];
+        let allFormations = [];
 
-        // Chargement des données JSON
+        // Chargement des données
         fetch('formations.json')
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                formations = data.formations;
-                document.getElementById('searchInput').addEventListener('input', searchFormations);
-            })
-            .catch(error => {
-                console.error('Erreur de chargement des données:', error);
-                alert('Impossible de charger les formations');
+                allFormations = data.formations;
+                displayFormations(allFormations);
+                document.getElementById('searchInput').addEventListener('input', handleSearch);
             });
 
-        // Fonction de recherche
-        function searchFormations() {
-            const input = document.getElementById('searchInput').value.toUpperCase();
-            const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = '';
-
-            if (input.length === 0) return;
-
-            const filtered = formations.filter(f => 
-                f.acro.toUpperCase().includes(input) || 
-                f.name.toUpperCase().includes(input)
-            );
-
-            if (filtered.length === 0) {
-                resultsContainer.innerHTML = '<div class="result-item">Aucun résultat trouvé</div>';
-                return;
-            }
-
-            filtered.forEach(f => {
-                const div = document.createElement('div');
-                div.className = 'result-item';
-                div.innerHTML = `<span class="acronym">${f.acro}</span> : ${f.name}`;
-                resultsContainer.appendChild(div);
+        // Affichage groupé
+        function displayFormations(formations) {
+            const grouped = groupByType(formations);
+            let html = '';
+            
+            Object.keys(grouped).forEach(type => {
+                html += `<div class="type-section">
+                           <div class="type-title">${type.toUpperCase()}</div>
+                           ${grouped[type].map(f => `
+                             <div class="result-item" onclick="window.location='details-formation.html?acro=${f.acro}'">
+                               <span class="acronym">${f.acro}</span> - ${f.name}
+                             </div>
+                           `).join('')}
+                         </div>`;
             });
+            
+            document.getElementById('results').innerHTML = html;
+        }
+
+        // Recherche et tri
+        function handleSearch() {
+            const term = this.value.toLowerCase();
+            const filtered = allFormations.filter(f => 
+                f.acro.toLowerCase().includes(term) || 
+                f.name.toLowerCase().includes(term)
+            ).sort((a, b) => relevanceSort(a, b, term));
+            
+            displayFormations(filtered);
+        }
+
+        // Fonctions utilitaires
+        function groupByType(formations) {
+            return formations.reduce((acc, f) => {
+                if(!acc[f.type]) acc[f.type] = [];
+                acc[f.type].push(f);
+                return acc;
+            }, {});
+        }
+
+        function relevanceSort(a, b, term) {
+            // Priorité aux acronymes exacts
+            if(a.acro.toLowerCase() === term) return -1;
+            if(b.acro.toLowerCase() === term) return 1;
+            return a.name.localeCompare(b.name);
         }
     </script>
 </body>
