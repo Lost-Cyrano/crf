@@ -1,0 +1,20 @@
+{
+  "formations": [
+    {"acro": "PSC1", "name": "Prévention et Secours Civique de niveau 1"},
+    {"acro": "GQS", "name": "Gestes Qui Sauvent"},
+    {"acro": "IPS", "name": "Initiation aux Premiers Secours"},
+    {"acro": "IPSE", "name": "Initiation aux Premiers Secours Enfant"},
+    {"acro": "IPSEF", "name": "Initiation aux Premiers Secours Enfant et Famille"},
+    {"acro": "IPSJ", "name": "Initiation aux Premiers Secours Jeunes"},
+    {"acro": "IPSJP", "name": "Initiation aux Premiers Secours Jeunes et Publics"},
+    {"acro": "CI", "name": "Chef d'Intervention"},
+    {"acro": "CDPE", "name": "Chef de Dispositif de Petite Envergure"},
+    {"acro": "FIPS", "name": "Formation d'Initiateur aux Premiers Secours"},
+    {"acro": "IRR", "name": "Initiation à la Réduction des Risques"},
+    {"acro": "PSE", "name": "Premiers Secours en Équipe Global"},
+    {"acro": "CLAS", "name": "Cadres Locaux de l'Action Sociale"},
+    {"acro": "OPR", "name": "Opérateur Radio"},
+    {"acro": "BRI", "name": "Balade Risque Inondation"},
+    {"acro": "TCEO", "name": "Tronc Commun des Encadrants Opérationnels"}
+  ]
+}
